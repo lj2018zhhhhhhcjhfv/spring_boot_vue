@@ -1,7 +1,14 @@
 package com.fastbee.mq.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.fastbee.common.core.mq.DeviceReportBo;
+import com.fastbee.common.utils.DateUtils;
+import com.fastbee.common.utils.StringUtils;
 import com.fastbee.common.utils.gateway.mq.TopicsUtils;
+import com.fastbee.iot.domain.DeviceLog;
+import com.fastbee.iot.model.HistoryModel;
+import com.fastbee.iot.service.IDeviceLogService;
 import com.fastbee.mq.model.ReportDataBo;
 import com.fastbee.mq.service.IDataHandler;
 import com.fastbee.mq.service.IMqttMessagePublish;
@@ -24,6 +31,8 @@ public class DeviceOtherMsgHandler {
     private IDataHandler dataHandler;
     @Resource
     private IMqttMessagePublish messagePublish;
+    @Resource
+    private IDeviceLogService deviceLogService;
 
     /**
      * 非属性消息消息处理入口
@@ -75,6 +84,12 @@ public class DeviceOtherMsgHandler {
                     messagePublish.sendFunctionMessage(bo);
                 }
                 break;
+            case "history":
+                type = topicsUtils.parseTopicName4(bo.getTopicName());
+                if ("post".equals(type)) {
+                    handleHistoryRequest(data);
+                }
+                break;
         }
     }
 
@@ -89,6 +104,49 @@ public class DeviceOtherMsgHandler {
         dataBo.setSerialNumber(bo.getSerialNumber());
         dataBo.setRuleEngine(false);
         return dataBo;
+    }
+
+    private void handleHistoryRequest(ReportDataBo data) {
+        if (StringUtils.isEmpty(data.getMessage())) {
+            return;
+        }
+        JSONObject jsonObject = JSON.parseObject(data.getMessage());
+        if (jsonObject == null) {
+            return;
+        }
+        String identity = jsonObject.getString("identity");
+        if (StringUtils.isEmpty(identity)) {
+            return;
+        }
+        String serialNumber = StringUtils.defaultIfEmpty(jsonObject.getString("serialNumber"), data.getSerialNumber());
+        String endTime = jsonObject.getString("endTime");
+        if (StringUtils.isEmpty(endTime)) {
+            endTime = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, DateUtils.getNowDate());
+        }
+        String beginTime = jsonObject.getString("startTime");
+        if (StringUtils.isEmpty(beginTime)) {
+            beginTime = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,
+                    DateUtils.addDays(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS, endTime), -1));
+        }
+        DeviceLog query = new DeviceLog();
+        query.setSerialNumber(serialNumber);
+        query.setIdentity(identity);
+        query.setBeginTime(beginTime);
+        query.setEndTime(endTime);
+        query.setIsHistory(1);
+        query.setLogType(jsonObject.getInteger("logType") != null ? jsonObject.getInteger("logType") : 1);
+        Integer isMonitor = jsonObject.getInteger("isMonitor");
+        query.setIsMonitor(isMonitor != null ? isMonitor : 0);
+        Integer limit = jsonObject.getInteger("limit");
+        if (limit != null && limit > 0) {
+            query.setTotal(limit);
+        }
+        Integer slaveId = jsonObject.getInteger("slaveId");
+        if (slaveId != null) {
+            query.setSlaveId(slaveId);
+        }
+        java.util.List<HistoryModel> historyList = deviceLogService.selectHistoryList(query);
+        messagePublish.publishHistory(data.getProductId(), serialNumber, identity, beginTime, endTime, historyList);
     }
 
 }

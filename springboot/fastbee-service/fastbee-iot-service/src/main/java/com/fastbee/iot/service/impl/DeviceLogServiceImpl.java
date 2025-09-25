@@ -52,4 +52,18 @@ public class DeviceLogServiceImpl implements IDeviceLogService
         }
         return logService.selectDeviceLogList(deviceLog);
     }
+
+    @Override
+    public List<HistoryModel> selectHistoryList(DeviceLog deviceLog) {
+        if (deviceLog.getIsHistory() == null) {
+            deviceLog.setIsHistory(1);
+        }
+        if (deviceLog.getLogType() == null) {
+            deviceLog.setLogType(1);
+        }
+        if (deviceLog.getIsMonitor() == null) {
+            deviceLog.setIsMonitor(0);
+        }
+        return logService.selectHistoryList(deviceLog);
+    }
 }

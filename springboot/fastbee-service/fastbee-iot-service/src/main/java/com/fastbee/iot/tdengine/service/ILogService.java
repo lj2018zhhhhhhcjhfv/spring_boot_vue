@@ -34,5 +34,8 @@ public interface ILogService {
     /** 查询物模型日志列表 **/
     List<DeviceLog> selectDeviceLogList(DeviceLog deviceLog);
 
+    /** 查询历史数据 **/
+    List<HistoryModel> selectHistoryList(DeviceLog deviceLog);
+
 
 }

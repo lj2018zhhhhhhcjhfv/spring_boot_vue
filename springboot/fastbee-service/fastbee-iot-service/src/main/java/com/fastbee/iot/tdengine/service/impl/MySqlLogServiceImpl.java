@@ -60,4 +60,9 @@ public class MySqlLogServiceImpl implements ILogService {
     public List<DeviceLog> selectDeviceLogList(DeviceLog deviceLog) {
         return deviceLogMapper.selectDeviceLogList(deviceLog);
     }
+
+    @Override
+    public List<HistoryModel> selectHistoryList(DeviceLog deviceLog) {
+        return deviceLogMapper.selectHistoryList(deviceLog);
+    }
 }

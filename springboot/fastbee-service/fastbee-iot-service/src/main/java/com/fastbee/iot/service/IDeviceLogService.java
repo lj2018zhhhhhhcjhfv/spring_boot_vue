@@ -32,4 +32,12 @@ public interface IDeviceLogService
      */
     public List<DeviceLog> selectDeviceLogList(DeviceLog deviceLog);
 
+    /**
+     * 查询设备历史数据
+     *
+     * @param deviceLog 查询条件
+     * @return 历史数据集合
+     */
+    List<HistoryModel> selectHistoryList(DeviceLog deviceLog);
+
 }
