@@ -147,6 +147,11 @@
                 <device-func ref="deviceFuncLog" :device="form" />
             </el-tab-pane>
 
+            <el-tab-pane name="deviceHistory" key="7" v-if="form.deviceType !== 3 && form.deviceId !=0 && hasShrarePerm('log')" lazy>
+                <span slot="label">历史数据</span>
+                <device-history ref="deviceHistory" :device="form" />
+            </el-tab-pane>
+
             <!-- 用于设置间距 -->
             <el-tab-pane disabled>
                 <span slot="label">
@@ -228,6 +233,7 @@ import runningStatus from './running-status';
 
 import deviceTimer from './device-timer';
 import DeviceFunc from './device-functionlog';
+import deviceHistory from './device-history';
 import vueQr from 'vue-qr';
 import { loadBMap } from '@/utils/map.js';
 import { deviceSynchronization, getDevice, addDevice, updateDevice, generatorDeviceNum, getMqttConnect } from '@/api/iot/device';
@@ -245,6 +251,7 @@ export default {
         DeviceFunc,
         deviceLog,
         deviceUser,
+        deviceHistory,
         runningStatus,
         productList,
         deviceTimer,
@@ -548,6 +555,8 @@ export default {
                         this.$refs.deviceSub.gateway.gwDeviceId = this.form.deviceId;
                         this.$refs.deviceSub.getList();
                     }
+                } else if (panel.name === 'deviceHistory') {
+                    this.$refs.deviceHistory && this.$refs.deviceHistory.getList();
                 }
             });
             if (this.form.deviceType !== 3) {

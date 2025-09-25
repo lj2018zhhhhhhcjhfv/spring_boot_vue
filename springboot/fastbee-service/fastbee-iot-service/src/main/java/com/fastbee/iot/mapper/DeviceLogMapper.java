@@ -3,6 +3,7 @@ package com.fastbee.iot.mapper;
 import com.fastbee.iot.domain.Device;
 import com.fastbee.iot.domain.DeviceLog;
 import com.fastbee.iot.model.DeviceStatistic;
+import com.fastbee.iot.model.HistoryModel;
 import com.fastbee.iot.model.MonitorModel;
 import org.springframework.stereotype.Repository;
 
@@ -86,5 +87,13 @@ public interface DeviceLogMapper
      * @return 设备日志集合
      */
     public List<DeviceLog> selectDeviceLogList(DeviceLog deviceLog);
+
+    /**
+     * 查询历史数据
+     *
+     * @param deviceLog 查询条件
+     * @return 历史数据集合
+     */
+    List<HistoryModel> selectHistoryList(DeviceLog deviceLog);
 
 }

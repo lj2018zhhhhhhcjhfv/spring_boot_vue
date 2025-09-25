@@ -3,6 +3,7 @@ package com.fastbee.data.controller;
 import com.fastbee.common.core.controller.BaseController;
 import com.fastbee.common.core.page.TableDataInfo;
 import com.fastbee.iot.domain.DeviceLog;
+import com.fastbee.iot.model.HistoryModel;
 import com.fastbee.iot.model.MonitorModel;
 import com.fastbee.iot.service.IDeviceLogService;
 import io.swagger.annotations.Api;
@@ -49,6 +50,19 @@ public class DeviceLogController extends BaseController
     {
         startPage();
         List<DeviceLog> list = deviceLogService.selectDeviceLogList(deviceLog);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询设备历史数据
+     */
+    @ApiOperation("查询设备历史数据")
+    @PreAuthorize("@ss.hasPermi('iot:device:list')")
+    @GetMapping("/history")
+    public TableDataInfo history(DeviceLog deviceLog)
+    {
+        startPage();
+        List<HistoryModel> list = deviceLogService.selectHistoryList(deviceLog);
         return getDataTable(list);
     }
 

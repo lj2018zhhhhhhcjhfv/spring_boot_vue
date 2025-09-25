@@ -35,6 +35,7 @@ public enum TopicType {
     STATUS_POST(1,11,"/status/post","发布状态"),
     NTP_GET(1,15,"/ntp/get","发布时钟同步"),
     INFO_GET(1,18,"/info/get","发布设备信息"),
+    HISTORY_GET(1,26,"/history/get","发布历史数据"),
 
 
     /*** 视频监控设备转协议发布 ***/
@@ -52,7 +53,10 @@ public enum TopicType {
     PROPERTY_GET_SIMULATE(4,23,"/property/get/simulate" ,"发布属性读取"),
     PROPERTY_SET_SIMULATE(4,13, "/property/set/simulate","发布属性写入"),
     WS_SERVICE_INVOKE_SIMULATE(2,24,"/ws/post/simulate", "模拟设备WS推送"),
-    PROPERTY_POST_SIMULATE(2,25,"/property/simulate/post", "订阅属性");
+    PROPERTY_POST_SIMULATE(2,25,"/property/simulate/post", "订阅属性"),
+
+    /*** 历史数据 ***/
+    HISTORY_POST(0,27,"/history/post","订阅历史数据请求");
 
     Integer type;
     Integer order;

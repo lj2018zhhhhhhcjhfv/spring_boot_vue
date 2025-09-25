@@ -26,6 +26,7 @@ import com.fastbee.common.utils.ip.IpUtils;
 import com.fastbee.iot.domain.Device;
 import com.fastbee.iot.domain.FunctionLog;
 import com.fastbee.iot.domain.Product;
+import com.fastbee.iot.model.HistoryModel;
 import com.fastbee.iot.model.NtpModel;
 import com.fastbee.iot.model.ThingsModels.PropertyDto;
 import com.fastbee.iot.ruleEngine.RuleProcess;
@@ -47,7 +48,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -327,6 +330,18 @@ public class MqttMessagePublishImpl implements IMqttMessagePublish {
             mqttClient.publish(1, true,  topic, JSON.toJSONString(thingsList));
         }
 
+    }
+
+    @Override
+    public void publishHistory(Long productId, String deviceNum, String identity, String beginTime, String endTime, List<HistoryModel> historyList) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("identity", identity);
+        payload.put("startTime", beginTime);
+        payload.put("endTime", endTime);
+        payload.put("count", historyList == null ? 0 : historyList.size());
+        payload.put("data", historyList);
+        String topic = topicsUtils.buildTopic(productId, deviceNum, TopicType.HISTORY_GET);
+        mqttClient.publish(1, false, topic, JSON.toJSONString(payload));
     }
 
     /**

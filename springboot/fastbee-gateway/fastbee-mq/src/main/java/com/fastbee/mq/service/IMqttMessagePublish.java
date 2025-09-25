@@ -9,6 +9,7 @@ import com.fastbee.common.core.thingsModel.ThingsModelSimpleItem;
 import com.fastbee.common.enums.DeviceStatus;
 import com.fastbee.common.enums.TopicType;
 import com.fastbee.iot.domain.Device;
+import com.fastbee.iot.model.HistoryModel;
 import com.fastbee.mq.model.ReportDataBo;
 
 import java.util.List;
@@ -74,6 +75,18 @@ public interface IMqttMessagePublish {
      * @return 设备
      */
     public Device deviceSynchronization(String deviceNumber);
+
+    /**
+     * 推送历史数据
+     *
+     * @param productId   产品ID
+     * @param deviceNum   设备编号
+     * @param identity    物模型标识
+     * @param beginTime   开始时间
+     * @param endTime     结束时间
+     * @param historyList 历史数据集合
+     */
+    void publishHistory(Long productId, String deviceNum, String identity, String beginTime, String endTime, List<HistoryModel> historyList);
 
     /**
      * 推送设备状态
